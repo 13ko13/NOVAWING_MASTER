@@ -1,0 +1,100 @@
+﻿#pragma once
+#include <array>
+#include <memory>
+
+#include "Scene.h"
+#include "Manager/ResourceLoader.h"
+
+class TitlePlayer;
+class TitleCamera;
+class WaterManager;
+class SkyBox;
+class SoundManager;
+class TitleScene : public Scene
+{
+public:
+	TitleScene(SceneController& controller);
+	~TitleScene();
+
+	void Init() override;//初期化処理
+	void Update() override;//更新処理
+	void Draw() override;//描画処理
+
+private:
+	enum class TitleSelect
+	{
+		StartGame,//ゲーム開始
+		ExitGame,//ゲーム終了
+
+		SelectMax,//選択肢の最大数
+	};
+
+	//各選択に対応するワイプの進行度
+	std::array<float, static_cast<size_t>(TitleSelect::SelectMax)> m_wipeProgress = {};
+
+	//現在プレイヤーが選んでいる選択肢
+	TitleSelect m_selectIndex = TitleSelect::StartGame;
+	TitleSelect m_prevSelectIdx = TitleSelect::StartGame;//前のフレーム
+
+	//フレーム計測
+	int m_frame = 0;
+
+	//タイトルロゴ
+	int m_titleLogoH = -1;
+	//ゲーム開始画像ハンドル
+	int m_gameStartGraphH = -1;
+	//ゲーム終了画像ハンドル
+	int m_gameEndGraphH = -1;
+	//カーソルが乗っているときのゲーム開始画像ハンドル
+	int m_gameStartOnCursorGraphH = -1;
+	//カーソルが乗っているときのゲーム終了画像ハンドル
+	int m_gameEndOnCursorGraphH = -1;
+	//選択肢の背景画像
+	int m_selectBackGroundH = -1;
+
+	//グリッチシェーダのハンドル
+	int m_glitchPSH = -1;
+
+	//グリッチシェーダに渡すためのシェーダバッファ
+	struct GlitchBuffer
+	{
+		float time;
+		float scanlineFrequency;
+		float dummy[2];//16バイトアライメント
+	};
+	int m_cbufferGlitch = -1;
+	GlitchBuffer* m_pCBuffGlitchData = nullptr;
+
+	//タイトル用のプレイヤー
+	std::shared_ptr<TitlePlayer> m_pPlayer;
+	//タイトル用のカメラ
+	std::shared_ptr<TitleCamera> m_pTitleCamera;
+
+	//海用の水マネージャーへのポインタ
+	std::shared_ptr<WaterManager> m_pWaterManager;
+	//スカイボックスへのポインタ
+	std::shared_ptr<SkyBox> m_pSkyBox;
+
+	//タイトル演出用の列挙体
+	enum class Phase
+	{
+		Forward,//前進
+		Somersault,//宙返り
+		Boost,//ブースト
+		LogoAndSelect,//タイトルロゴと選択肢出現中
+	};
+	Phase m_phase = Phase::Forward;
+
+	//ブースト中にフレーム数える用
+	int m_playerBoostFrame = 0;
+
+	//タイトルロゴのスケール
+	float m_titleLogoScale = 0.0f;
+	//タイトルロゴ演出時のフレーム管理用
+	int m_titleLogoFrame = 0;
+	//選択肢のフェードのフレーム管理用
+	int m_selectFadeFrame = 0;
+
+	//サウンドマネージャー
+	std::shared_ptr<SoundManager> m_pSoundManager;
+};

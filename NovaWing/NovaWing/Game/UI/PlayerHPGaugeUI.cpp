@@ -1,0 +1,86 @@
+﻿#include <DxLib.h>
+#include <cassert>
+
+#include "PlayerHPGaugeUI.h"
+#include "Game/GameObjects/Actors/Charactor/Player/Player.h"
+#include "Manager/ResourceLoader.h"
+#include "Utility/SizeF.h"
+#include "Constants/ShaderRegister.h"
+#include "Utility/Size.h"
+#include "Utility/GraphShaderDraw.h"
+#include "Utility/Vector2.h"
+#include "Manager/InputManager.h"
+#include "Main/Application.h"
+
+namespace
+{
+	//スキャンラインを入れる周期
+	constexpr float scanline_frequency = 74.0f;
+	const Vector2 hp_frame_pos_ratio = Vector2(0.02f, 0.04f);
+}
+
+PlayerHPGaugeUI::PlayerHPGaugeUI(std::weak_ptr<Player> pPlayer) :
+	m_pPlayer(pPlayer)
+{
+	//スキャンラインを入れる周期をシェーダに渡す
+	m_pCBuffGlitchData->scanlineFrequency = scanline_frequency;
+	UpdateShaderConstantBuffer(m_cbufferGlitch);
+}
+
+PlayerHPGaugeUI::~PlayerHPGaugeUI()
+{
+}
+
+void PlayerHPGaugeUI::Update()
+{
+	GaugeUIBase::Update();
+
+#ifdef _DEBUG
+	//デバッグのため、スキャンラインを入れる周期を上げ下げできるようにしておく
+	if (InputManager::GetInstance().IsPressed(
+		InputEvent::upScanlineFrequency))
+	{
+		m_scanlineFrequency++;
+	}
+	if (InputManager::GetInstance().IsPressed(
+		InputEvent::downScanlineFrequency))
+	{
+		m_scanlineFrequency--;
+	}
+	/*m_pCBuffGlitchData->scanlineFrequency = m_scanlineFrequency;
+	UpdateShaderConstantBuffer(m_cbufferGlitch);*/
+#endif
+}
+
+void PlayerHPGaugeUI::Draw()
+{
+	//HPの枠画像を取得
+	int hpFrameHandle = ResourceLoader::GetInstance().GetGraphic(
+		ResourceLoader::GraphicID::PlayerHPFrame
+	);
+	//HPゲージの画像を取得
+	int hpGaugeHandle = ResourceLoader::GetInstance().GetGraphic(
+		ResourceLoader::GraphicID::PlayerHPGauge
+	);
+
+	const Size& wsize = Application::GetInstance().GetWindowSize();
+	Vector2 frameDrawPos = Vector2(
+		wsize.width * hp_frame_pos_ratio.x,
+		wsize.height * hp_frame_pos_ratio.y
+		);
+
+	//HPの割合から、切り取り位置を計算
+	float ratio =
+		static_cast<float>(m_pPlayer.lock()->GetHealth()) /
+		static_cast<float>(m_pPlayer.lock()->GetMaxHealth());
+
+	DrawGauge(
+		hpFrameHandle,
+		hpGaugeHandle,
+		frameDrawPos,
+		ratio);
+
+#ifdef _DEBUG
+	DrawFormatString(0, 115, 0xffffff, L"scanlineFrequency : %f", m_scanlineFrequency);
+#endif
+}

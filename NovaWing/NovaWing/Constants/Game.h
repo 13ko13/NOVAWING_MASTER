@@ -1,0 +1,27 @@
+﻿#pragma once
+
+namespace Game
+{
+	//ゲーム形を作る際に必要な定数
+#ifdef _DEBUG
+	//デバッグ中はウィンドウモードにする
+	constexpr int screen_width = 1280;
+	constexpr int screen_height = 720;
+#else
+	constexpr int screen_width = 1920;
+	constexpr int screen_height = 1080;
+#endif
+
+	//UIのスケール計算の基準となる解像度
+	//screen_width/heightがDebug/Releaseで異なっていても、
+	//UIの見た目の大きさをこの解像度基準で揃えるために使う
+	constexpr int base_screen_width = 1920;
+	constexpr int base_screen_height = 1080;
+
+	constexpr int color_bit_num = 32;
+
+	//海面からどれぐらい離れたところにプレイヤーを押し戻すか
+	constexpr float sea_player_margin = 100.0f;
+	//海面からどれぐらい離れたところにカメラを押し戻すか
+	constexpr float sea_camera_margin = 300.0f;
+}
