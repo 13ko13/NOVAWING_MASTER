@@ -26,7 +26,6 @@ public:
 	bool operator!=(const Vector3& val)const;///不等価比較
 	bool operator==(const Vector3& val)const;///等価比較
 	VECTOR ToDxLib() const;//DxLibのVECTOR型に変換する
-	void Zero();//xyzをゼロにする
 
 	//Easing関数
 	//勉強用

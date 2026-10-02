@@ -2,7 +2,7 @@
 
 #include "Manager/ResourceLoader.h"
 #include "Game/GameObjects/GameObject.h"
-#include "Game/Collision/SphereShape.h"
+#include "Utility/Sphere.h"
 
 class CameraBase;
 class BulletBase : public GameObject
@@ -21,7 +21,7 @@ public:
 	virtual void Draw();//描画処理
 
 	//当たり判定用の球を取得
-	std::shared_ptr<SphereShape> GetSphere() const { return m_sphere; }
+	const Sphere& GetSphere() const { return m_sphere; }
 
 	//攻撃力を取得
 	const int GetAttackPower() const { return m_attackPower; }
@@ -31,7 +31,7 @@ public:
 
 protected:
 	//当たり判定用の球
-	std::shared_ptr<SphereShape> m_sphere = std::make_shared<SphereShape>();
+	Sphere m_sphere;
 
 	//カメラ
 	std::weak_ptr<CameraBase> m_pCamera;

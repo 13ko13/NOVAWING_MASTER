@@ -3,8 +3,7 @@
 #include <set>
 
 #include "../Charactor.h"
-#include "Game/Collision/SphereShape.h"
-#include "Game/Collision/PlayerCollider.h"
+#include "Utility/Sphere.h"
 #include "Manager/SoundManager.h"
 
 class InputManager;
@@ -45,8 +44,6 @@ public:
 	void LerpToAngleX(float targetAngle, float t);
 	//AngleYまでLerpする
 	void LerpToAngleY(float targetAngle, float t);
-	//AngleZまでLerpする
-	void LerpToAngleZ(float targetAngle, float t);
 
 	//GameSceneからカメラをセットさせる
 	void SetCamera(std::shared_ptr<CameraBase> pCamera) { m_pCamera = pCamera; }
@@ -68,9 +65,7 @@ public:
 	//ゲージを使用してるかを取得
 	bool IsUseGauge() const;
 	//当たり判定用の球を取得
-	std::shared_ptr <SphereShape> GetSphere() const;
-	//当たり判定インターフェースを取得
-	ICollider& GetCollider() { return m_collider; }
+	Sphere GetSphere() const { return m_collSphere; }
 
 	//フォーカスターゲットを取得
 	std::weak_ptr<EnemyBase> GetForcusTarget() const;
@@ -188,8 +183,6 @@ private:
 	float m_rotationX = 0.0f;
 	//左右回転角
 	float m_rotationY = 0.0f;
-	//Z軸回転角
-	float m_rotationZ = 0.0f;
 
 	//移動系ステート
 	std::shared_ptr<IMovementState> m_pMovementState;
@@ -200,8 +193,8 @@ private:
 	//特殊行動系ステート
 	std::shared_ptr<ISpecialActionState> m_pSpecialState;
 
-	//当たり判定インターフェース
-	PlayerCollider m_collider;
+	//当たり判定用の球
+	Sphere m_collSphere;
 
 	//ターゲットマネージャー
 	std::weak_ptr<TargetManager> m_pTargetManager;

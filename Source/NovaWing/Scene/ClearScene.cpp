@@ -384,8 +384,6 @@ void ClearScene::Draw()
 {
 	//ウィンドウサイズ
 	Size wsize = Application::GetInstance().GetWindowSize();
-	//UIの見た目の大きさをDebug/Releaseで揃えるためのスケール
-	float uiScale = Application::GetInstance().GetUIScale();
 	//画面の真ん中
 	int x = wsize.width / 2;
 	int y = wsize.height / 2;
@@ -447,7 +445,7 @@ void ClearScene::Draw()
 		int backgroundH = loader.GetGraphic(ResourceLoader::GraphicID::SelectBackGround);
 		DrawGraphToShaderByCenter(
 			wsize.width * 0.5f, wsize.height * 0.5f,
-			background_graph_scale * uiScale, backgroundH,
+			background_graph_scale, backgroundH,
 			1.0f,
 			uvMaxU,
 			uvMinU
@@ -471,7 +469,7 @@ void ClearScene::Draw()
 			DrawGraphToShaderByCenter(
 				wsize.width * retry_ratio.x,
 				wsize.height * retry_ratio.y,
-				select_graph_scale * uiScale, retryHandle,
+				select_graph_scale, retryHandle,
 				1.0f,
 				uvMaxU,
 				uvMinU
@@ -480,7 +478,7 @@ void ClearScene::Draw()
 			DrawGraphToShaderByCenter(
 				wsize.width * back_title_ratio.x,
 				wsize.height * back_title_ratio.y,
-				select_graph_scale * uiScale, backTitleHandle,
+				select_graph_scale, backTitleHandle,
 				1.0f,
 				uvMaxU,
 				uvMinU
@@ -503,7 +501,7 @@ void ClearScene::Draw()
 					DrawGraphToShaderByCenter(
 						wsize.width * retry_ratio.x,
 						wsize.height * retry_ratio.y,
-						select_graph_scale * uiScale, retryOnCursorHandle,
+						select_graph_scale, retryOnCursorHandle,
 						1.0f,
 						m_wipeProgress[static_cast<int>(ClearSelect::ReTry)]
 					);
@@ -512,7 +510,7 @@ void ClearScene::Draw()
 				DrawGraphToShaderByCenter(
 					wsize.width * back_title_ratio.x,
 					wsize.height * back_title_ratio.y,
-					select_graph_scale * uiScale, backTitleHandle,
+					select_graph_scale, backTitleHandle,
 					1.0f
 				);
 				break;
@@ -527,7 +525,7 @@ void ClearScene::Draw()
 					DrawGraphToShaderByCenter(
 						wsize.width * back_title_ratio.x,
 						wsize.height * back_title_ratio.y,
-						select_graph_scale * uiScale, backTitleOnCursorHandle,
+						select_graph_scale, backTitleOnCursorHandle,
 						1.0f, m_wipeProgress[static_cast<int>(ClearSelect::BackTitle)]
 					);
 				}
@@ -535,7 +533,7 @@ void ClearScene::Draw()
 				DrawGraphToShaderByCenter(
 					wsize.width * retry_ratio.x,
 					wsize.height * retry_ratio.y,
-					select_graph_scale * uiScale, retryHandle,
+					select_graph_scale, retryHandle,
 					1.0f
 				);
 				break;
@@ -557,9 +555,9 @@ void ClearScene::Draw()
 	//二つの画像を描画
 	//Aボタン画像
 	DrawRotaGraph(
-		static_cast<int>(wsize.width * a_button_pos.x),
-		static_cast<int>(wsize.height * a_button_pos.y),
-		a_button_scale * uiScale, 0.0, aButtonHandle, true
+		wsize.width * a_button_pos.x,
+		wsize.height * a_button_pos.y,
+		a_button_scale, 0.0, aButtonHandle, true
 	);
 
 	//次へボタンを押してからは決定画像に切り替え
@@ -567,18 +565,18 @@ void ClearScene::Draw()
 	{
 		//決定のテキスト画像
 		DrawRotaGraph(
-			static_cast<int>(wsize.width * decide_graph_pos.x),
-			static_cast<int>(wsize.height * decide_graph_pos.y),
-			decide_graph_scale * uiScale, 0.0, decideHandle, true
+			wsize.width * decide_graph_pos.x,
+			wsize.height * decide_graph_pos.y,
+			decide_graph_scale, 0.0, decideHandle, true
 		);
 	}
 	else
 	{
 		//次へ のテキスト画像
 		DrawRotaGraph(
-			static_cast<int>(wsize.width * next_graph_pos.x),
-			static_cast<int>(wsize.height * next_graph_pos.y),
-			next_graph_scale * uiScale, 0.0, nextHandle, true
+			wsize.width * next_graph_pos.x,
+			wsize.height *next_graph_pos.y,
+			next_graph_scale, 0.0, nextHandle, true
 		);
 	}
 }
@@ -594,35 +592,35 @@ void ClearScene::DrawResultText(int fontHandle)
 
 	//敵を倒した数
 	std::wstring killCountWString = std::to_wstring(static_cast<int>(m_currentKillCount));
-	int killCountWidth = GetDrawStringWidthToHandle(killCountWString.c_str(), static_cast<int>(killCountWString.size()), fontHandle);
+	int killCountWidth = GetDrawStringWidthToHandle(killCountWString.c_str(), killCountWString.size(), fontHandle);
 	DrawStringToHandle(
-		static_cast<int>(wsize.width * kill_count_pos.x) - killCountWidth,
-		static_cast<int>(wsize.height * kill_count_pos.y),
+		wsize.width * kill_count_pos.x - killCountWidth,
+		wsize.height * kill_count_pos.y,
 		killCountWString.c_str(), score_color, fontHandle
 	);
 	//クリアタイム
 	std::wstring clearTimeWString = std::to_wstring(static_cast<int>(m_currentClearTime));
-	int clearTimeWidth = GetDrawStringWidthToHandle(clearTimeWString.c_str(), static_cast<int>(clearTimeWString.size()), fontHandle);
+	int clearTimeWidth = GetDrawStringWidthToHandle(clearTimeWString.c_str(), clearTimeWString.size(), fontHandle);
 	DrawStringToHandle(
-		static_cast<int>(wsize.width * clear_time_pos.x) - clearTimeWidth,
-		static_cast<int>(wsize.height * clear_time_pos.y),
+		wsize.width * clear_time_pos.x - clearTimeWidth,
+		wsize.height * clear_time_pos.y,
 		clearTimeWString.c_str(), score_color, fontHandle
 	);
 	//被弾回数
 	std::wstring hitCountWString = std::to_wstring(static_cast<int>(m_currentHitCount));
-	int hitCountWidth = GetDrawStringWidthToHandle(hitCountWString.c_str(), static_cast<int>(hitCountWString.size()), fontHandle);
+	int hitCountWidth = GetDrawStringWidthToHandle(hitCountWString.c_str(), hitCountWString.size(), fontHandle);
 	DrawStringToHandle(
-		static_cast<int>(wsize.width * hit_count_pos.x) - hitCountWidth,
-		static_cast<int>(wsize.height * hit_count_pos.y),
+		wsize.width * hit_count_pos.x - hitCountWidth,
+		wsize.height * hit_count_pos.y,
 		hitCountWString.c_str(), hit_count_color, fontHandle
 	);
 
 	//スコア
 	std::wstring scoreWString = std::to_wstring(static_cast<int>(m_currentScore));
-	int scoreWidth = GetDrawStringWidthToHandle(scoreWString.c_str(), static_cast<int>(scoreWString.size()), fontHandle);
+	int scoreWidth = GetDrawStringWidthToHandle(scoreWString.c_str(), scoreWString.size(), fontHandle);
 	DrawStringToHandle(
-		static_cast<int>(wsize.width * score_pos.x) - scoreWidth,
-		static_cast<int>(wsize.height * score_pos.y),
+		wsize.width * score_pos.x - scoreWidth,
+		wsize.height * score_pos.y,
 		scoreWString.c_str(), score_color, fontHandle
 	);
 
@@ -634,26 +632,26 @@ void ClearScene::DrawResultText(int fontHandle)
 	ClearDrawScreen();
 	//敵を倒した数
 	DrawStringToHandle(
-		static_cast<int>(wsize.width * kill_count_pos.x) - killCountWidth,
-		static_cast<int>(wsize.height * kill_count_pos.y),
+		wsize.width * kill_count_pos.x - killCountWidth,
+		wsize.height * kill_count_pos.y,
 		killCountWString.c_str(), score_color, fontHandle
 	);
 	//クリアタイム
 	DrawStringToHandle(
-		static_cast<int>(wsize.width * clear_time_pos.x) - clearTimeWidth,
-		static_cast<int>(wsize.height * clear_time_pos.y),
+		wsize.width * clear_time_pos.x - clearTimeWidth,
+		wsize.height * clear_time_pos.y,
 		clearTimeWString.c_str(), score_color, fontHandle
 	);
 	//被弾回数
 	DrawStringToHandle(
-		static_cast<int>(wsize.width * hit_count_pos.x) - hitCountWidth,
-		static_cast<int>(wsize.height * hit_count_pos.y),
+		wsize.width * hit_count_pos.x - hitCountWidth,
+		wsize.height * hit_count_pos.y,
 		hitCountWString.c_str(), hit_count_color, fontHandle
 	);
 	//スコア
 	DrawStringToHandle(
-		static_cast<int>(wsize.width * score_pos.x) - scoreWidth,
-		static_cast<int>(wsize.height * score_pos.y),
+		wsize.width * score_pos.x - scoreWidth,
+		wsize.height * score_pos.y,
 		scoreWString.c_str(), score_color, fontHandle
 	);
 

@@ -116,13 +116,6 @@ VECTOR Vector3::ToDxLib() const
 	return VGet(x, y, z);
 }
 
-void Vector3::Zero()
-{
-	x = 0.0f;
-	y = 0.0f;
-	z = 0.0f;
-}
-
 Vector3 Vector3::Lerp(const Vector3& start, const Vector3& end, float t)
 {
 	//線形補間

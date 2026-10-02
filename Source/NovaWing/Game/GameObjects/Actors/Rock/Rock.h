@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Actor.h"
 #include "Manager/ResourceLoader.h"
-#include "Game/Collision/RockCollider.h"
+#include "Utility/Sphere.h"
 
 class CameraBase;
 class Rock : public Actor
@@ -24,11 +24,9 @@ public:
 	void Draw() override;
 
 	//球の配列を返す
-	std::vector<std::shared_ptr<SphereShape>> GetSpheres() const { return m_collider.GetSpheres(); }
-	//当たり判定インターフェースを取得
-	ICollider& GetCollider() { return m_collider; }
+	std::vector<Sphere> GetSpheres() const { return m_spheres; }
 
 private:
-	//当たり判定インターフェース
-	RockCollider m_collider;
+	//球を配列で持つ
+	std::vector<Sphere> m_spheres;
 };

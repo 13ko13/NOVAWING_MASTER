@@ -36,7 +36,7 @@ namespace
 
 	//ゲーム終了選択肢
 	constexpr float end_ratio_x = 0.5f;//画面に対して横位置をどのあたりにしたいか
-	constexpr float end_ratio_y = 0.85f;//画面に対して縦位置をどのあたりにしたいか
+	constexpr float end_ratio_y = 0.85;//画面に対して縦位置をどのあたりにしたいか
 	constexpr double end_graph_scale = 0.825;//選択肢画像のサイズ
 
 	//選択肢の背景画像
@@ -65,7 +65,7 @@ namespace
 	//タイトルロゴ出現演出にかけるフレーム
 	constexpr int logo_max_frame = 30;
 	//タイトルロゴのスタンプ演出時の最初の大きさ
-	constexpr float logo_max_scale = 4.5f;
+	constexpr double logo_max_scale = 4.5;
 
 	//選択肢出現にかけるフレーム
 	constexpr int select_max_frame = 50;
@@ -370,8 +370,6 @@ void TitleScene::Draw()
 
 	//ウィンドウサイズ
 	Size wsize = Application::GetInstance().GetWindowSize();
-	//UIの見た目の大きさをDebug/Releaseで揃えるためのスケール
-	float uiScale = Application::GetInstance().GetUIScale();
 
 	//Effekseerのエフェクト描画
 	DrawEffekseer3D();
@@ -381,15 +379,15 @@ void TitleScene::Draw()
 	if (m_phase == Phase::LogoAndSelect)
 	{
 		//タイトルロゴの演出用進行度計算
-		float progress = static_cast<float>(m_titleLogoFrame) / logo_max_frame;
+		double progress = static_cast<double>(m_titleLogoFrame) / logo_max_frame;
 		//最初の大きさから通常の大きさに補完する
 		m_titleLogoScale = std::lerp(logo_max_scale, logo_scale, progress);
 
 		//タイトルロゴ描画
 		DrawRotaGraph(
-			static_cast<int>(wsize.width * logo_ratio_x),
-			static_cast<int>(wsize.height * logo_ratio_y),
-			m_titleLogoScale * uiScale, 0.0, m_titleLogoH, true);
+			wsize.width * logo_ratio_x,
+			wsize.height * logo_ratio_y,
+			m_titleLogoScale, 0.0, m_titleLogoH, true);
 
 		//ちょっと遅めに選択肢も出現させる
 		float selectProgress = static_cast<float>(m_selectFadeFrame) /
@@ -403,7 +401,7 @@ void TitleScene::Draw()
 		DrawGraphToShaderByCenter(
 			wsize.width * back_ground_ratio_x,
 			wsize.height * back_ground_ratio_y,
-			back_ground_graph_scale * uiScale,
+			back_ground_graph_scale,
 			m_selectBackGroundH,
 			selectProgress
 		);
@@ -421,7 +419,7 @@ void TitleScene::Draw()
 				DrawGraphToShaderByCenter(
 					wsize.width * start_ratio_x,
 					wsize.height * start_ratio_y,
-					start_graph_scale * uiScale,
+					start_graph_scale,
 					m_gameStartOnCursorGraphH,
 					selectProgress,
 					m_wipeProgress[static_cast<int>(TitleSelect::StartGame)]
@@ -432,7 +430,7 @@ void TitleScene::Draw()
 			DrawGraphToShaderByCenter(
 				wsize.width * end_ratio_x,
 				wsize.height * end_ratio_y,
-				end_graph_scale * uiScale,
+				end_graph_scale,
 				m_gameEndGraphH,
 				selectProgress
 			);
@@ -444,7 +442,7 @@ void TitleScene::Draw()
 			DrawGraphToShaderByCenter(
 				wsize.width * start_ratio_x,
 				wsize.height * start_ratio_y,
-				start_graph_scale * uiScale,
+				start_graph_scale,
 				m_gameStartGraphH,
 				selectProgress
 			);
@@ -458,7 +456,7 @@ void TitleScene::Draw()
 				DrawGraphToShaderByCenter(
 					wsize.width * end_ratio_x,
 					wsize.height * end_ratio_y,
-					end_graph_scale * uiScale,
+					end_graph_scale,
 					m_gameEndOnCursorGraphH,
 					selectProgress,
 					m_wipeProgress[static_cast<int>(TitleSelect::ExitGame)]
